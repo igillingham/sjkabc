@@ -15,7 +15,7 @@ This module provides functionality for parsing ABC music notation.
 """
 import os
 import textwrap
-
+from typing import Generator
 
 HEADER_KEYS = dict(
     B='book',
@@ -336,7 +336,7 @@ def get_field_from_id(id):
         raise KeyError('No such header key: {}'.format(id))
 
 
-def parse_file(filename):
+def parse_file(filename) -> Generator[Tune, None, None]:
     """Run Parser on file contents
 
     This function is iterable.
@@ -359,17 +359,17 @@ def parse_file(filename):
         yield tune
 
 
-def parse_dir(dir):
+def parse_dir(abc_dir) -> Generator[Tune, None, None]:
     """Run :class:`Parser` on every file with .abc extension in `dir`
 
-    :param dir: Directory of abc files
+    :param abc_dir: Directory of abc files
     :returns: :class:`Tune` object for every found file
     :rtype: :class:`Tune`
 
     .. seealso:: :func:`parse_file`, :class:`Parser`, :class:`Tune`
 
     """
-    for dirpath, dirnames, filenames in os.walk(dir):
+    for dirpath, dirnames, filenames in os.walk(abc_dir):
         for filename in [f for f in filenames if f.endswith('.abc')]:
             for tune in parse_file(os.path.join(dirpath, filename)):
                 yield tune
